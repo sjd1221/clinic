@@ -3,6 +3,8 @@ import 'bulma/css/bulma.css';
 // import './src/css/login.css';
 import axios from "axios";
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 
 const Login = () => {
@@ -18,20 +20,22 @@ const Login = () => {
       [name]: value
     }));
   };
-
+  const navigate = useNavigate();
   const handleSubmit = (event) => {
     event.preventDefault();
     axios.post('http://localhost:8000/', state)
   .then(res => {
-    console.log(res.data);
+    if (res.data.stat == 'yes'){
+      navigate('/home');
+    }
   });
   };
 
   
   return (
-    <form onSubmit={handleSubmit} style={{marginTop: '50px'}} className="column is-half">
+    <form onSubmit={handleSubmit} style={{marginTop: '50px', marginRight: 'auto', marginLeft: 'auto'}} className="column is-half">
       <div className="box is-flex is-flex-direction-column is-justify-content-center is-align-items-center ">
-      <figure class="image is-128x128">
+      <figure className="image is-128x128">
         <img className="is-one-third" src="https://east.nikan.hospital/wp-content/uploads/sites/7/2023/03/Logo-1.png"/>
       </figure>
         <label className="label ">Username</label>

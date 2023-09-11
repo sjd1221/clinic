@@ -21,4 +21,5 @@ from . import views
 
 urlpatterns = [
     path('', views.loginpage, name="loginpage"),
+    path('showdoctor', views.showdoctor, name="showdoctor")
 ]
