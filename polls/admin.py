@@ -1,16 +1,19 @@
 from django.contrib import admin
-from .models import Delay, Doctor
+from .models import Doctor, Details
 
 
-class DelayAdmin(admin.ModelAdmin):
-    pass
+
 
 class DoctorAdmin(admin.ModelAdmin):
     pass
 
+class DetailsAdmin(admin.ModelAdmin):
+    pass
 
-admin.site.register(Delay, DelayAdmin)
+
 admin.site.register(Doctor, DoctorAdmin)
+admin.site.register(Details, DetailsAdmin)
+
 
 
 
