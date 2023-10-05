@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'polls',
+    'import_export',
     'corsheaders',
 ]
 
@@ -56,6 +57,8 @@ MIDDLEWARE = [
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
 )
+
+IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 ROOT_URLCONF = 'DelayDoctor.urls'
 

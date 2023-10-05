@@ -9,14 +9,14 @@ import ReactSearchBox from "react-search-box";
 
 
 const Home = () => {
-    const [data, setData] = useState([]);
-    const [temp, setTemp] = useState([]);
-    const [filter, setFilter] = useState("enter");
-    const [query, setQuery] = useState("");
-    const [index, setIndex] = useState([]);
-    const [toggle, setToggle] = useState("");
-    const [active, setActive] = useState(false);
-    const [isloaded, setIsloaded] = useState(true);
+    const [data, setData] = useState([]); // get all data
+    const [temp, setTemp] = useState({DelayDoctor: "", EnterDoctor: "", HurryDoctor: "", ExitDoctor: ""}); // set input modal
+    const [filter, setFilter] = useState("enter"); // filter doctor
+    const [query, setQuery] = useState(""); // search doctor
+    const [index, setIndex] = useState([]); //
+    const [toggle, setToggle] = useState({name: "", id: "", DelayDoctor: "", EnterDoctor: "", HurryDoctor: "", ExitDoctor: ""}); // modal card
+    const [active, setActive] = useState(false); // modal is-active
+    const [isloaded, setIsloaded] = useState(true); // axios control
 
     const onOptionChange = e => {
         setFilter(e.target.value)
@@ -25,6 +25,20 @@ const Home = () => {
     const onIsActive = e => {
         setActive(false)
     }
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setToggle((prevProps) => ({
+          ...prevProps,
+          [name]: value
+        }));
+      };
+
+    const handleSubmit = (event) => {
+      event.preventDefault();
+      axios.post('http://localhost:8000/adddelay', toggle)
+    .then(res => {
+      console.log(res.data)
+    })};
     
     if(isloaded == true){ 
         axios.get('http://localhost:8000/showdoctor').then(res => {
@@ -40,15 +54,46 @@ const Home = () => {
     //     }
     // })
     const listcheck = data.filter((item) => item.fields.DelayDoctor !== null).map(item => item)
+    
 
     
     return <div>
+        
         <div className="column is-center">
             <div className="column " >
                 <input type="text"  onChange={event => setQuery(event.target.value)}/>
                 <label className="radio"><input type="radio" name="filter" value="all" onChange={onOptionChange} checked={filter === "all"} />همه پزشکان</label>
                 <label className="radio"><input type="radio" name="filter" value="enter" onChange={onOptionChange} checked={filter === "enter"} />پزشکان(ورود)</label>
             </div>
+            </div>
+            <div className={"modal" + (active ? "is-active" : "")}>
+                <div className="modal-background"></div>
+                <div className="modal-card">
+                    <header className="modal-card-head">
+                        <p className="modal-card-title">Modal title</p>
+                        <button onClick={onIsActive} className="delete" aria-label="close"></button>
+                    </header>
+                    <form onSubmit={handleSubmit}>
+                    <section className="modal-card-body">
+                            <label className="label">نظام پزشکی</label>
+                            <input className="input" type="text" value={toggle.id} disabled />
+                            <label className="label">نام پزشک</label>
+                            <input className="input" type="text" value={toggle.name} disabled />
+                            <label className="label">ورود</label>
+                            <input className="input" type="text" value={toggle.EnterDoctor} onChange={handleInputChange}/>
+                            <label className="label">تعجیل</label>
+                            <input className="input" type="text" value={toggle.DelayDoctor} onChange={handleInputChange}/>
+                            <label className="label">خروج</label>
+                            <input className="input" type="text" value={toggle.ExitDoctor} onChange={handleInputChange}/>
+                            <label className="label">تاخیر</label>
+                            <input className="input" type="text" value={toggle.HurryDoctor} onChange={handleInputChange}/>
+                    </section>
+                        <footer className="modal-card-foot">
+                            <button type="submit" onClick={onIsActive} className="button is-success">Save changes</button>
+                            <button onClick={onIsActive} className="button">Cancel</button>
+                        </footer>
+                    </form>
+                </div>
             </div>
             
             <table className="table">
@@ -58,7 +103,7 @@ const Home = () => {
                 </thead>
                 <tbody >
                     {data.map(user => (
-                     <tr onClick={() => axios.post('http://localhost:8000/adddelay', user.fields.IdDoctor).then(res => setActive(true))} key={user.pk}>
+                     <tr onClick={() => axios.post('http://localhost:8000/adddoctor', user.fields.IdDoctor).then(res => setToggle({name: res.data[0].fields.Name, id: res.data[0].fields.IdDoctor}), setActive(true))} key={user.pk}>
                          <td>{user.fields.Name}</td>
                          <td>{user.fields.IdDoctor}</td>
                      </tr>
@@ -91,27 +136,7 @@ const Home = () => {
                 })
             } */}
             </table>
-            <div className={"modal" + (active ? "is-active" : "")}>
-                <div className="modal-background"></div>
-                <div className="modal-card">
-                    <header className="modal-card-head">
-                        <p className="modal-card-title">Modal title</p>
-                        <button onClick={onIsActive} className="delete" aria-label="close"></button>
-                    </header>
-                    <section className="modal-card-body">
-                        <div>IdDoctor</div>
-                        <div>Name</div>
-                        <input className="input" type="text"></input>
-                        <input className="input" type="text"></input>
-                        <input className="input" type="text"></input>
-                        <input className="input" type="text"></input>
-                    </section>
-                        <footer className="modal-card-foot">
-                            <button onClick={onIsActive} className="button is-success">Save changes</button>
-                            <button onClick={onIsActive} className="button">Cancel</button>
-                        </footer>
-                </div>
-            </div>
+            
         
         </div>
     };

@@ -33,15 +33,27 @@ def showdoctor(request):
 
 
 @csrf_exempt
-def adddelay(request):
+def adddoctor(request):
     x = json.loads(request.body)
     doct = Doctor.objects.filter(IdDoctor = x)
     if bool(Details.objects.filter(Doctor = doct[0], DateDoctor= date.today())) is False:
         newdelay = Details.objects.create(Doctor = doct[0])
     else:
         pass
+    serdoct = serializers.serialize("json", doct)
+    serdoct = json.loads(serdoct)
+    return JsonResponse(serdoct, safe=False)
 
-    return HttpResponse(doct)
+
+
+@csrf_exempt
+def adddelay(request):
+    x = json.loads(request.body)
+    doct = Doctor.objects.filter(IdDoctor=x["id"])
+    deldoctor = Details.objects.filter(Doctor =doct[0]).update(DelayDoctor= x["DelayDoctor"],EnterDoctor= x["EnterDoctor"], HurryDoctor= x["HurryDoctor"], ExitDoctor= x["ExitDoctor"])
+
+
+
 
 
 
