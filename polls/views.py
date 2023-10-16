@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate
 from django.core import serializers
 from itertools import chain
 from datetime import date
+import pandas as pd
 
 
 
@@ -27,22 +28,35 @@ def loginpage(request):
 # Create your views here.
 
 def showdoctor(request):
-    doctors = serializers.serialize("json", Doctor.objects.all())
-    doct = json.loads(doctors)
-    return JsonResponse(doct, safe=False)
+    # doctors = serializers.serialize("json", Doctor.objects.all())
+    # doct = json.loads(doctors)
+    # return JsonResponse(doct, safe=False)
+    doct = list(Doctor.objects.all().values())
+    detail = list(Details.objects.all().values())
+    return JsonResponse({"doct": doct,
+                         "detail": detail}, safe=False)
 
 
 @csrf_exempt
 def adddoctor(request):
     x = json.loads(request.body)
-    doct = Doctor.objects.filter(IdDoctor = x)
-    if bool(Details.objects.filter(Doctor = doct[0], DateDoctor= date.today())) is False:
-        newdelay = Details.objects.create(Doctor = doct[0])
+    # serdoct = Doctor.objects.filter(IdDoctor = x["id"])
+    if x["DateDoctor"] == "":
+        x["DateDoctor"] = date.today()
+    if bool(Details.objects.filter(Doctor = Doctor.objects.get(IdDoctor=x["id"]), DateDoctor= x["DateDoctor"])) is False:
+        newdelay = Details.objects.create(Doctor = Doctor.objects.get(IdDoctor=x["id"]), DateDoctor= x["DateDoctor"], DelayDoctor= x["DelayDoctor"],EnterDoctor= x["EnterDoctor"], HurryDoctor= x["HurryDoctor"], ExitDoctor= x["ExitDoctor"])
     else:
-        pass
-    serdoct = serializers.serialize("json", doct)
-    serdoct = json.loads(serdoct)
-    return JsonResponse(serdoct, safe=False)
+        Details.objects.filter(Doctor = Doctor.objects.get(IdDoctor=x["id"]), DateDoctor= x["DateDoctor"]).update(DelayDoctor= x["DelayDoctor"],EnterDoctor= x["EnterDoctor"], HurryDoctor= x["HurryDoctor"], ExitDoctor= x["ExitDoctor"])
+        newdelay = Details.objects.filter(Doctor = Doctor.objects.get(IdDoctor=x["id"]), DateDoctor= x["DateDoctor"])
+    # serdoct = serializers.serialize("json", newdelay)
+    # serdoct = json.loads(serdoct)
+    detail = serializers.serialize("json", Details.objects.all())
+    detail = json.loads(detail)
+    return JsonResponse(detail, safe= False)
+    # return HttpResponse(Details.objects.filter(Doctor = Doctor.objects.get(IdDoctor=x["id"]), DateDoctor= x["DateDoctor"]))
+
+
+
 
 
 
@@ -51,6 +65,8 @@ def adddelay(request):
     x = json.loads(request.body)
     doct = Doctor.objects.filter(IdDoctor=x["id"])
     deldoctor = Details.objects.filter(Doctor =doct[0]).update(DelayDoctor= x["DelayDoctor"],EnterDoctor= x["EnterDoctor"], HurryDoctor= x["HurryDoctor"], ExitDoctor= x["ExitDoctor"])
+    return HttpResponse("hello")
+
 
 
 
@@ -58,11 +74,21 @@ def adddelay(request):
 
 
 def testsite(request):
-    x = Details.objects.all()
-    doct = Doctor.objects.filter(IdDoctor=1234567)
-    y = Details.objects.filter(Doctor=doct[0], DateDoctor="2023-09-30")
+    detail = serializers.serialize("json", Details.objects.select_related('Doctor'))
+    detail = json.loads(detail)
+    x = Details.objects.select_related('Doctor')
+    return JsonResponse(detail, safe=False)
+    # return HttpResponse(x)
+    # if bool(Details.objects.filter(Doctor=Doctor.objects.get(IdDoctor=1378),DateDoctor="2023-10-10") is None) is False:
+    #     return HttpResponse("x")
+    # else:
+    #     return HttpResponse("hi")
+    # doct = list(Doctor.objects.all().values())
+    # detail = list(Details.objects.all().values())
+    # return JsonResponse({"doct": doct,
+    #                      "detail": detail}, safe=False)
 
-    if bool(y) is False:
-        return HttpResponse("12344")
-    else:
-        return HttpResponse("111111")
+
+def checksite(request):
+    detail = Details.objects.all()
+    return HttpResponse(detail[0].Doctor)

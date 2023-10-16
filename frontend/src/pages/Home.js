@@ -9,12 +9,12 @@ import ReactSearchBox from "react-search-box";
 
 
 const Home = () => {
-    const [data, setData] = useState([]); // get all data
-    const [temp, setTemp] = useState({DelayDoctor: "", EnterDoctor: "", HurryDoctor: "", ExitDoctor: ""}); // set input modal
+    const [data, setData] = useState([]); // get all doctor
+    const [temp, setTemp] = useState([]); // get all details
     const [filter, setFilter] = useState("enter"); // filter doctor
     const [query, setQuery] = useState(""); // search doctor
     const [index, setIndex] = useState([]); //
-    const [toggle, setToggle] = useState({name: "", id: "", DelayDoctor: "", EnterDoctor: "", HurryDoctor: "", ExitDoctor: ""}); // modal card
+    const [toggle, setToggle] = useState({name: "", id: "", DelayDoctor: "", EnterDoctor: "", HurryDoctor: "", ExitDoctor: "", DateDoctor: ""}); // modal card
     const [active, setActive] = useState(false); // modal is-active
     const [isloaded, setIsloaded] = useState(true); // axios control
 
@@ -35,14 +35,19 @@ const Home = () => {
 
     const handleSubmit = (event) => {
       event.preventDefault();
-      axios.post('http://localhost:8000/adddelay', toggle)
+      axios.post('http://localhost:8000/adddoctor', toggle)
     .then(res => {
-      console.log(res.data)
+        setTemp(res.data)
     })};
     
+    axios.get('http://localhost:8000/testsite').then(res => {
+        console.log(res.data)
+    })
+
     if(isloaded == true){ 
         axios.get('http://localhost:8000/showdoctor').then(res => {
-            setData(res.data)
+            setData(res.data.doct)
+            setTemp(res.data.detail)
             setIsloaded(false)
         })
     }
@@ -53,10 +58,8 @@ const Home = () => {
     //         setTemp(user);
     //     }
     // })
-    const listcheck = data.filter((item) => item.fields.DelayDoctor !== null).map(item => item)
-    
+    // const listcheck = data.filter((item) => item.fields.DelayDoctor !== null).map(item => item)
 
-    
     return <div>
         
         <div className="column is-center">
@@ -76,17 +79,19 @@ const Home = () => {
                     <form onSubmit={handleSubmit}>
                     <section className="modal-card-body">
                             <label className="label">نظام پزشکی</label>
-                            <input className="input" type="text" value={toggle.id} disabled />
+                            <input name="id" className="input" type="text" value={toggle.id} onChange={handleInputChange} disabled />
                             <label className="label">نام پزشک</label>
-                            <input className="input" type="text" value={toggle.name} disabled />
+                            <input name="name" className="input" type="text" value={toggle.name} onChange={handleInputChange} disabled />
+                            <label className="label">روز</label>
+                            <input name="DateDoctor" className="input" type="text" value={toggle.DateDoctor} onChange={handleInputChange}/>
                             <label className="label">ورود</label>
-                            <input className="input" type="text" value={toggle.EnterDoctor} onChange={handleInputChange}/>
+                            <input name="EnterDoctor" className="input" type="text" value={toggle.EnterDoctor} onChange={handleInputChange}/>
                             <label className="label">تعجیل</label>
-                            <input className="input" type="text" value={toggle.DelayDoctor} onChange={handleInputChange}/>
+                            <input name="DelayDoctor" className="input" type="text" value={toggle.DelayDoctor} onChange={handleInputChange}/>
                             <label className="label">خروج</label>
-                            <input className="input" type="text" value={toggle.ExitDoctor} onChange={handleInputChange}/>
+                            <input name="ExitDoctor" className="input" type="text" value={toggle.ExitDoctor} onChange={handleInputChange}/>
                             <label className="label">تاخیر</label>
-                            <input className="input" type="text" value={toggle.HurryDoctor} onChange={handleInputChange}/>
+                            <input name="HurryDoctor" className="input" type="text" value={toggle.HurryDoctor} onChange={handleInputChange}/>
                     </section>
                         <footer className="modal-card-foot">
                             <button type="submit" onClick={onIsActive} className="button is-success">Save changes</button>
@@ -100,12 +105,24 @@ const Home = () => {
                 <thead>
                     <th className="">نام پزشک</th>
                     <th className="">نظام</th>
+                    <th className="">نظام</th>
+                    <th className="">نظام</th>
+                    <th className="">نظام</th>
+                    <th className="">نظام</th>
                 </thead>
                 <tbody >
-                    {data.map(user => (
-                     <tr onClick={() => axios.post('http://localhost:8000/adddoctor', user.fields.IdDoctor).then(res => setToggle({name: res.data[0].fields.Name, id: res.data[0].fields.IdDoctor}), setActive(true))} key={user.pk}>
-                         <td>{user.fields.Name}</td>
-                         <td>{user.fields.IdDoctor}</td>
+                    {temp.map(user => (
+                     <tr className="is-clickable" onClick={() => (setToggle((pervprops) => ({
+                        ...pervprops,
+                        name : user.Doctor,
+                        id : user.Doctor,
+                    })), setActive(true))} key={user.pk}>
+                         <td>{user.DateDoctor}</td>
+                         <td>{user.DelayDoctor}</td>
+                         <td>{user.EnterDoctor}</td>
+                         <td>{user.HurryDoctor}</td>
+                         <td>{user.ExitDoctor}</td>
+                         {/* <td>{data.filter(doc => doc.id == user.Doctor_id).map()}</td> */}
                      </tr>
                      ))}
                 </tbody>

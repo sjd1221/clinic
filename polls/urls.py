@@ -24,5 +24,6 @@ urlpatterns = [
     path('showdoctor', views.showdoctor, name="showdoctor"),
     path('adddelay', views.adddelay, name="adddelay"),
     path('testsite', views.testsite, name="testsite"),
-    path('adddoctor', views.adddoctor, name="adddoctor")
+    path('adddoctor', views.adddoctor, name="adddoctor"),
+    path('checksite', views.checksite, name="checksite")
 ]
