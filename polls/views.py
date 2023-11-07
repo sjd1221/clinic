@@ -31,10 +31,14 @@ def showdoctor(request):
     # doctors = serializers.serialize("json", Doctor.objects.all())
     # doct = json.loads(doctors)
     # return JsonResponse(doct, safe=False)
-    doct = list(Doctor.objects.all().values())
-    detail = list(Details.objects.all().values())
-    return JsonResponse({"doct": doct,
-                         "detail": detail}, safe=False)
+    detail = list(Details.objects.all().values('Doctor__Name',
+                                               'Doctor__IdDoctor',
+                                               'DelayDoctor',
+                                               'DateDoctor',
+                                               'ExitDoctor',
+                                               'HurryDoctor',
+                                               'EnterDoctor'))
+    return JsonResponse({"detail": detail}, safe=False)
 
 
 @csrf_exempt
@@ -74,10 +78,10 @@ def adddelay(request):
 
 
 def testsite(request):
-    detail = serializers.serialize("json", Details.objects.select_related('Doctor'))
-    detail = json.loads(detail)
-    x = Details.objects.select_related('Doctor')
-    return JsonResponse(detail, safe=False)
+    # detail = serializers.serialize("json", Details.objects.select_related('Doctor'))
+    # detail = json.loads(detail)
+    detail = list(Details.objects.all().values('Doctor__Name','Doctor__IdDoctor','DelayDoctor','DateDoctor','ExitDoctor','HurryDoctor','EnterDoctor'))
+    return JsonResponse({"detail" : detail}, safe=False)
     # return HttpResponse(x)
     # if bool(Details.objects.filter(Doctor=Doctor.objects.get(IdDoctor=1378),DateDoctor="2023-10-10") is None) is False:
     #     return HttpResponse("x")
