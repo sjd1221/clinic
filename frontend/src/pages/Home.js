@@ -19,12 +19,13 @@ const Home = () => {
     const [data, setData] = useState([]); //data show table
     const [value, setValue] = useState('10:00');
     const [temp, setTemp] = useState([]); // get all details
-    const [filter, setFilter] = useState("enter"); // status filter doctor
+    const [filter, setFilter] = useState("all"); // status filter doctor
     const [query, setQuery] = useState(""); // search doctor
     const [index, setIndex] = useState([]); // filter doctor
     const [toggle, setToggle] = useState({name: "", id: "", DelayDoctor: "", EnterDoctor: "", HurryDoctor: "", ExitDoctor: "", DateDoctor: ""}); // modal card
     const [active, setActive] = useState(false); // modal is-active
     const [isloaded, setIsloaded] = useState(true); // axios control
+    const [check, setCheck] = useState(false);
 
 
     const change = (unix, formatted) => {
@@ -37,6 +38,7 @@ const Home = () => {
 
     const onOptionChange = e => {
         setFilter(e.target.value)
+        setCheck(false)
       }
 
     const onIsActive = e => {
@@ -65,6 +67,7 @@ const Home = () => {
         axios.get('http://localhost:8000/showdoctor').then(res => {
             setTemp(res.data.detail)
             setData(res.data.detail)
+            setIndex(res.data.detail)
             setIsloaded(false)
         })
     }
@@ -73,28 +76,34 @@ const Home = () => {
         const list = []
         console.log(query)
         setQuery(event.target.value)
-        temp.filter(user => {
+        index.filter(user => {
             if (query === '') {
-                setData(temp)
-            } else if (user.Doctor__Name.toLowerCase().includes(query.toLowerCase())) {
+                setData(index)
+            }
+            else if (user.Doctor__Name.toLowerCase().includes(query.toLowerCase()) == true) {
                 list.push(user)
                 setData(list)
+            }
+            else if (user.Doctor__Name.toLowerCase().includes(query.toLowerCase()) == false) {
+                console.log(query)
             }
         })
     }
     
     
-    
-    
-    if(filter == "enter"){
-        const listcheck = temp.filter((item) => item.DelayDoctor !== null).map(item => item)
-        console.log(listcheck)
+    if(check == false){
+        if(filter == "enter"){
+            const listcheck = temp.filter((item) => item.DelayDoctor !== null).map(item => item)
+            setData(listcheck)
+            setIndex(listcheck)
+            setCheck(true)
+        }
+        else if(filter == "all"){
+            setData(temp)
+            setIndex(temp)
+            setCheck(true)
+        }
     }
-    else if(filter == "all"){
-        console.log(temp)
-    }
-
-    
     
 
     return <div>
@@ -185,8 +194,9 @@ const Home = () => {
                 </thead>
                 <tbody >
                     {data.map(user => (
-                     <tr className="is-clickable" onClick={() => (setToggle((pervprops) => ({
-                        ...pervprops,
+                     <tr key={user.pk}>
+                        <td><button onClick={() => (setToggle(() => ({name : user.Doctor__Name, id : user.Doctor__IdDoctor, DateDoctor : user.DateDoctor})), setActive(true))} className="button">افزودن</button></td>
+                        <td className="is-clickable" onClick={() => (setToggle(() => ({
                         name : user.Doctor__Name,
                         id : user.Doctor__IdDoctor,
                         DelayDoctor : user.DelayDoctor,
@@ -194,15 +204,61 @@ const Home = () => {
                         EnterDoctor : user.EnterDoctor,
                         ExitDoctor : user.ExitDoctor,
                         HurryDoctor : user.HurryDoctor,
-                    })), setActive(true))} key={user.pk}>
-                        <td><button className="button">افزودن</button></td>
-                        <td>{user.Doctor__Name}</td>
-                        <td>{user.Doctor__IdDoctor}</td>
-                        <td>{user.DateDoctor}</td>
-                        <td>{user.DelayDoctor}</td>
-                        <td>{user.EnterDoctor}</td>
-                        <td>{user.HurryDoctor}</td>
-                        <td>{user.ExitDoctor}</td>
+                    })), setActive(true))}>{user.Doctor__Name}</td>
+                        <td className="is-clickable" onClick={() => (setToggle(() => ({
+                        name : user.Doctor__Name,
+                        id : user.Doctor__IdDoctor,
+                        DelayDoctor : user.DelayDoctor,
+                        DateDoctor : user.DateDoctor,
+                        EnterDoctor : user.EnterDoctor,
+                        ExitDoctor : user.ExitDoctor,
+                        HurryDoctor : user.HurryDoctor,
+                    })), setActive(true))}>{user.Doctor__IdDoctor}</td>
+                        <td className="is-clickable" onClick={() => (setToggle(() => ({
+                        name : user.Doctor__Name,
+                        id : user.Doctor__IdDoctor,
+                        DelayDoctor : user.DelayDoctor,
+                        DateDoctor : user.DateDoctor,
+                        EnterDoctor : user.EnterDoctor,
+                        ExitDoctor : user.ExitDoctor,
+                        HurryDoctor : user.HurryDoctor,
+                    })), setActive(true))}>{user.DateDoctor}</td>
+                        <td className="is-clickable" onClick={() => (setToggle(() => ({
+                        name : user.Doctor__Name,
+                        id : user.Doctor__IdDoctor,
+                        DelayDoctor : user.DelayDoctor,
+                        DateDoctor : user.DateDoctor,
+                        EnterDoctor : user.EnterDoctor,
+                        ExitDoctor : user.ExitDoctor,
+                        HurryDoctor : user.HurryDoctor,
+                    })), setActive(true))}>{user.EnterDoctor}</td>
+                        <td className="is-clickable" onClick={() => (setToggle(() => ({
+                        name : user.Doctor__Name,
+                        id : user.Doctor__IdDoctor,
+                        DelayDoctor : user.DelayDoctor,
+                        DateDoctor : user.DateDoctor,
+                        EnterDoctor : user.EnterDoctor,
+                        ExitDoctor : user.ExitDoctor,
+                        HurryDoctor : user.HurryDoctor,
+                    })), setActive(true))}>{user.DelayDoctor}</td>
+                        <td className="is-clickable" onClick={() => (setToggle(() => ({
+                        name : user.Doctor__Name,
+                        id : user.Doctor__IdDoctor,
+                        DelayDoctor : user.DelayDoctor,
+                        DateDoctor : user.DateDoctor,
+                        EnterDoctor : user.EnterDoctor,
+                        ExitDoctor : user.ExitDoctor,
+                        HurryDoctor : user.HurryDoctor,
+                    })), setActive(true))}>{user.ExitDoctor}</td>
+                        <td className="is-clickable" onClick={() => (setToggle(() => ({
+                        name : user.Doctor__Name,
+                        id : user.Doctor__IdDoctor,
+                        DelayDoctor : user.DelayDoctor,
+                        DateDoctor : user.DateDoctor,
+                        EnterDoctor : user.EnterDoctor,
+                        ExitDoctor : user.ExitDoctor,
+                        HurryDoctor : user.HurryDoctor,
+                    })), setActive(true))}>{user.HurryDoctor}</td>
                      </tr>
                      ))}
                 </tbody>
