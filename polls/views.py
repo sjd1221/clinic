@@ -31,6 +31,19 @@ def showdoctor(request):
     # doctors = serializers.serialize("json", Doctor.objects.all())
     # doct = json.loads(doctors)
     # return JsonResponse(doct, safe=False)
+
+    doctor = Doctor.objects.all()
+    det = Details.objects.all().values('Doctor__id')
+    mylist = []
+    doclist = []
+    for x in range(0, len(det)):
+        mylist.append(det[x]['Doctor__id'])
+    for z in range(0, len(doctor)):
+        doclist.append(doctor[z].id)
+    res = [i for i in doclist if i not in mylist]
+    for y in res:
+        Details.objects.create(Doctor=Doctor.objects.get(id=y))
+
     detail = list(Details.objects.all().values('Doctor__Name',
                                                'Doctor__IdDoctor',
                                                'DelayDoctor',
@@ -94,5 +107,16 @@ def testsite(request):
 
 
 def checksite(request):
-    detail = Details.objects.all()
-    return HttpResponse(detail[0].Doctor)
+    # doctor = Doctor.objects.all()
+    # detail = Details.objects.all().values('Doctor__id')
+    # mylist = []
+    # doclist = []
+    # for x in range(0, len(detail)):
+    #     mylist.append(detail[x]['Doctor__id'])
+    # for z in range(0, len(doctor)):
+    #     doclist.append(doctor[z].id)
+    # res = [i for i in doclist if i not in mylist]
+    # for y in res:
+    #     Details.objects.create(Doctor = Doctor.objects.get(id = y))
+
+    return HttpResponse("hey")

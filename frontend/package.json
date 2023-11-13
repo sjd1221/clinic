@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.5.0",
     "bulma": "^0.9.4",
+    "jalali-moment": "^3.3.11",
     "rc-time-picker": "^3.7.3",
     "react": "^18.2.0",
     "react-advance-jalaali-datepicker": "^1.4.0",
